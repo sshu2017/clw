@@ -106,7 +106,7 @@ fn print_numeric_stats(
     total: usize,
     null_count: usize,
     invalid_count: usize,
-    values: &mut Vec<f64>,
+    values: &mut [f64],
 ) {
     println!(
         "\n{}",

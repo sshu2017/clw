@@ -1,0 +1,11 @@
+name,age,city
+Alice,30,NYC
+Bob,25
+Charlie,35,Boston,ExtraField
+David,40,Chicago
+Eve
+Frank,33,Seattle
+George,45,Portland,Extra1,Extra2
+Helen,31,Austin
+Ian,29
+Jane,27,Denver,Extra

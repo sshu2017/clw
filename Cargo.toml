@@ -1,0 +1,17 @@
+[package]
+name = "clw"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+atty = "0.2.14"
+clap = { version = "4.5.53", features = ["derive"] }
+colored = "3.0.0"
+csv = "1.4.0"
+indicatif = "0.17"
+rand = "0.8"
+
+[dev-dependencies]
+assert_cmd = "2.0"
+predicates = "3.0"
+tempfile = "3.8"

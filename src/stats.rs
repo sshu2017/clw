@@ -52,7 +52,7 @@ pub fn column_stats(path: Option<&str>, column: &str) -> Result<(), Box<dyn Erro
 
         // Update spinner every 1000 rows
         if let Some(ref pb) = spinner {
-            if values.len() % 1000 == 0 {
+            if values.len().is_multiple_of(1000) {
                 pb.set_message(format!("Reading data... {} rows", values.len()));
                 pb.tick();
             }

@@ -8,29 +8,23 @@
 
 CLW is a blazing-fast CSV manipulation tool written in Rust, designed to make working with CSV files from the command line intuitive and efficient. Born from 10+ years of day-to-day data science work, CLW is a Swiss Army knife that brings together the essential CSV operations you actually need in your workflow.
 
-## Performance
-
-**10-400x faster than csvkit** (Python), the most popular CSV tool among data scientists:
-
-- **Column selection**: 14.8x faster
-- **Statistics**: 122x faster
-- **Frequency analysis**: 6x faster
-- **Dataset overview**: 404x faster
-
-See [BENCHMARKS.md](BENCHMARKS.md) for detailed comparisons.
-
 ## Features
 
-- **Lightning Fast**: Built with Rust for maximum performance - orders of magnitude faster than Python tools
-- **Auto-detection**: Automatically detects delimiters (comma, pipe, tab, etc.)
-- **Data Analysis**: Built-in statistics and frequency analysis with visualization
+- **Lightning Fast**: Built with Rust for maximum performance - See [BENCHMARKS.md](BENCHMARKS.md) for details.
+- **Auto-detection**: Automatically detects delimiters (comma, pipe, tab, and space.)
+- **Data Analysis**: Built-in statistics and frequency analysis
 - **Data Transformation**: Transpose, stack, and paste operations
-- **Smart Filtering**: Filter by values or patterns with regex support
-- **Random Sampling**: Sample rows or percentages with reproducible seeds
+- **Smart Filtering**: Filter by values 
+- **Random Sampling**: Sample rows with reproducible seeds
 - **Flexible I/O**: Works with files or stdin/stdout for easy piping
-- **Lightweight**: 1.7MB single binary, no dependencies
+- **Lightweight**: 1.7MB single binary
 
 ## Installation
+
+### Pip install (recommended)
+```bash
+pip install clw
+```
 
 ### From Source
 

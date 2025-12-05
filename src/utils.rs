@@ -37,8 +37,39 @@ pub fn detect_delimiter(reader: &mut dyn BufRead) -> Result<char, Box<dyn Error>
         return Err("File is empty or contains no data".into());
     }
 
-    // Detect delimiter - data is still in the reader!
-    let delimiter = if first_line.contains('|') { '|' } else { ',' };
+    // Detect delimiter by counting occurrences of common delimiters
+    let delimiters = [('\t', "tab"), ('|', "pipe"), (',', "comma"), (' ', "space")];
+    let mut counts: Vec<(char, usize, &str)> = delimiters
+        .iter()
+        .map(|&(delim, name)| (delim, first_line.matches(delim).count(), name))
+        .collect();
+
+    // Sort by count (descending), with tie-breaking by delimiter priority
+    counts.sort_by(|a, b| {
+        match b.1.cmp(&a.1) {
+            std::cmp::Ordering::Equal => {
+                // If counts are equal, prioritize: tab > pipe > comma > space
+                let priority = |c: char| match c {
+                    '\t' => 0,
+                    '|' => 1,
+                    ',' => 2,
+                    ' ' => 3,
+                    _ => 4,
+                };
+                priority(a.0).cmp(&priority(b.0))
+            }
+            other => other,
+        }
+    });
+
+    // Return the delimiter with the highest count
+    // If no delimiter found (all counts are 0), default to comma
+    let delimiter = if counts[0].1 > 0 {
+        counts[0].0
+    } else {
+        ','
+    };
+
     Ok(delimiter)
 }
 
@@ -64,11 +95,27 @@ mod tests {
     }
 
     #[test]
-    fn test_detect_delimiter_defaults_to_comma() {
+    fn test_detect_delimiter_space() {
         let data = "name age city\nCharlie 35 Boston\n";
         let mut reader = Cursor::new(data);
         let delimiter = detect_delimiter(&mut reader).unwrap();
-        assert_eq!(delimiter, ',', "Should default to comma when no pipe found");
+        assert_eq!(delimiter, ' ', "Should detect space delimiter");
+    }
+
+    #[test]
+    fn test_detect_delimiter_tab() {
+        let data = "name\tage\tcity\nAlice\t30\tNYC\n";
+        let mut reader = Cursor::new(data);
+        let delimiter = detect_delimiter(&mut reader).unwrap();
+        assert_eq!(delimiter, '\t', "Should detect tab delimiter");
+    }
+
+    #[test]
+    fn test_detect_delimiter_defaults_to_comma() {
+        let data = "name\nAlice\n";
+        let mut reader = Cursor::new(data);
+        let delimiter = detect_delimiter(&mut reader).unwrap();
+        assert_eq!(delimiter, ',', "Should default to comma when no delimiter found");
     }
 
     #[test]

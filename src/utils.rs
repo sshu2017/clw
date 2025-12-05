@@ -64,11 +64,7 @@ pub fn detect_delimiter(reader: &mut dyn BufRead) -> Result<char, Box<dyn Error>
 
     // Return the delimiter with the highest count
     // If no delimiter found (all counts are 0), default to comma
-    let delimiter = if counts[0].1 > 0 {
-        counts[0].0
-    } else {
-        ','
-    };
+    let delimiter = if counts[0].1 > 0 { counts[0].0 } else { ',' };
 
     Ok(delimiter)
 }
@@ -115,7 +111,10 @@ mod tests {
         let data = "name\nAlice\n";
         let mut reader = Cursor::new(data);
         let delimiter = detect_delimiter(&mut reader).unwrap();
-        assert_eq!(delimiter, ',', "Should default to comma when no delimiter found");
+        assert_eq!(
+            delimiter, ',',
+            "Should default to comma when no delimiter found"
+        );
     }
 
     #[test]

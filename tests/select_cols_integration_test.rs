@@ -1,10 +1,10 @@
-use assert_cmd::Command;
+use assert_cmd::cargo::cargo_bin_cmd;
 use predicates::prelude::*;
 use std::fs;
 
 #[test]
 fn test_select_single_column() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("select")
         .arg("--columns")
         .arg("name")
@@ -25,7 +25,7 @@ fn test_select_single_column() {
 
 #[test]
 fn test_select_multiple_columns() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("select")
         .arg("--columns")
         .arg("name,age,city")
@@ -40,7 +40,7 @@ fn test_select_multiple_columns() {
 
 #[test]
 fn test_select_short_flag() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("select")
         .arg("-c")
         .arg("age,name")
@@ -54,7 +54,7 @@ fn test_select_short_flag() {
 
 #[test]
 fn test_select_reorder_columns() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("select")
         .arg("-c")
         .arg("occupation,name,age")
@@ -69,7 +69,7 @@ fn test_select_reorder_columns() {
 
 #[test]
 fn test_select_with_spaces_in_column_list() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("select")
         .arg("-c")
         .arg("name, age, city")
@@ -84,7 +84,7 @@ fn test_select_with_spaces_in_column_list() {
 fn test_select_with_piped_input() {
     let csv_content = fs::read("tests/fixtures/sample_comma.csv").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("select")
         .arg("-c")
         .arg("name,city")
@@ -97,7 +97,7 @@ fn test_select_with_piped_input() {
 
 #[test]
 fn test_select_pipe_delimited() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("select")
         .arg("-c")
         .arg("product,price")
@@ -112,7 +112,7 @@ fn test_select_pipe_delimited() {
 
 #[test]
 fn test_select_invalid_column() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("select")
         .arg("-c")
         .arg("name,invalid_column")
@@ -129,7 +129,7 @@ fn test_select_invalid_column() {
 
 #[test]
 fn test_select_all_columns_in_different_order() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("select")
         .arg("-c")
         .arg("city,occupation,age,name")
@@ -143,7 +143,7 @@ fn test_select_all_columns_in_different_order() {
 // #[test]
 // fn test_select_duplicate_columns_auto_cancel() {
 //     // In non-interactive mode (tests), duplicate columns automatically cancel
-//     let mut cmd = Command::cargo_bin("clw").unwrap();
+//     let mut cmd = cargo_bin_cmd!("clw");
 //     cmd.arg("select")
 //         .arg("-c")
 //         .arg("name,age,name")
@@ -163,7 +163,7 @@ fn test_select_all_columns_in_different_order() {
 
 // #[test]
 // fn test_select_multiple_duplicates_auto_cancel() {
-//     let mut cmd = Command::cargo_bin("clw").unwrap();
+//     let mut cmd = cargo_bin_cmd!("clw");
 //     cmd.arg("select")
 //         .arg("-c")
 //         .arg("name,age,name,city,age")
@@ -185,7 +185,7 @@ fn test_select_all_columns_in_different_order() {
 #[test]
 fn test_select_no_columns_specified() {
     // This should fail at the clap level - --columns is required
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("select")
         .arg("tests/fixtures/sample_comma.csv")
         .assert()
@@ -195,7 +195,7 @@ fn test_select_no_columns_specified() {
 
 #[test]
 fn test_select_single_column_csv() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("select")
         .arg("-c")
         .arg("username")
@@ -212,7 +212,7 @@ fn test_select_preserves_empty_fields() {
     // Create a temporary CSV with empty fields
     let temp_csv = "name,age,city\nAlice,30,\nBob,,LA\n,25,Chicago\n";
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("select")
         .arg("-c")
         .arg("name,age,city")
@@ -226,7 +226,7 @@ fn test_select_preserves_empty_fields() {
 
 #[test]
 fn test_select_single_column_from_many() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("select")
         .arg("-c")
         .arg("city")

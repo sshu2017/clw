@@ -1,10 +1,10 @@
-use assert_cmd::Command;
+use assert_cmd::cargo::cargo_bin_cmd;
 use predicates::prelude::*;
 use std::fs;
 
 #[test]
 fn test_header_with_file_argument() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("header")
         .arg("tests/fixtures/sample_comma.csv")
         .assert()
@@ -21,7 +21,7 @@ fn test_header_with_file_argument() {
 fn test_header_with_piped_input() {
     let csv_content = fs::read("tests/fixtures/sample_comma.csv").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("header")
         .write_stdin(csv_content)
         .assert()
@@ -38,7 +38,7 @@ fn test_header_with_piped_input() {
 fn test_header_with_pipe_delimiter() {
     let csv_content = fs::read("tests/fixtures/sample_pipe.csv").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("header")
         .write_stdin(csv_content)
         .assert()
@@ -53,7 +53,7 @@ fn test_header_with_pipe_delimiter() {
 
 #[test]
 fn test_header_empty_file_error() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("header")
         .arg("tests/fixtures/empty.csv")
         .assert()
@@ -65,7 +65,7 @@ fn test_header_empty_file_error() {
 
 #[test]
 fn test_header_nonexistent_file() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("header")
         .arg("tests/fixtures/does_not_exist.csv")
         .assert()

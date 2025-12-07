@@ -1,10 +1,10 @@
-use assert_cmd::Command;
+use assert_cmd::cargo::cargo_bin_cmd;
 use predicates::prelude::*;
 use std::fs;
 
 #[test]
 fn test_stats_numeric_column() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stats")
         .arg("--column")
         .arg("age")
@@ -29,7 +29,7 @@ fn test_stats_numeric_column() {
 
 #[test]
 fn test_stats_categorical_column() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stats")
         .arg("--column")
         .arg("name")
@@ -46,7 +46,7 @@ fn test_stats_categorical_column() {
 
 #[test]
 fn test_stats_short_flag() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stats")
         .arg("-c")
         .arg("city")
@@ -62,7 +62,7 @@ fn test_stats_short_flag() {
 fn test_stats_with_piped_input() {
     let csv_content = fs::read("tests/fixtures/sample_comma.csv").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stats")
         .arg("-c")
         .arg("age")
@@ -76,7 +76,7 @@ fn test_stats_with_piped_input() {
 
 #[test]
 fn test_stats_pipe_delimited() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stats")
         .arg("-c")
         .arg("price")
@@ -90,7 +90,7 @@ fn test_stats_pipe_delimited() {
 
 #[test]
 fn test_stats_invalid_column() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stats")
         .arg("-c")
         .arg("invalid_column")
@@ -108,7 +108,7 @@ fn test_stats_invalid_column() {
 #[test]
 fn test_stats_numeric_values() {
     // Test that numeric statistics are correctly calculated
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stats")
         .arg("-c")
         .arg("age")
@@ -140,7 +140,7 @@ fn test_stats_numeric_values() {
 #[test]
 fn test_stats_categorical_values() {
     // Test that categorical statistics show the right unique count
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stats")
         .arg("-c")
         .arg("name")
@@ -153,7 +153,7 @@ fn test_stats_categorical_values() {
 
 #[test]
 fn test_stats_single_column_csv() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stats")
         .arg("-c")
         .arg("username")
@@ -167,7 +167,7 @@ fn test_stats_single_column_csv() {
 
 #[test]
 fn test_stats_missing_column_flag() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stats")
         .arg("tests/fixtures/sample_comma.csv")
         .assert()
@@ -180,7 +180,7 @@ fn test_stats_with_empty_values() {
     // Create a CSV with some empty values
     let temp_csv = "name,age\nAlice,30\nBob,\nCharlie,35\n";
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stats")
         .arg("-c")
         .arg("age")
@@ -198,7 +198,7 @@ fn test_stats_mixed_numeric_categorical() {
     // Create a CSV with mixed values in a column
     let temp_csv = "value\n10\n20\nabc\n30\n";
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stats")
         .arg("-c")
         .arg("value")
@@ -225,7 +225,7 @@ fn test_stats_mostly_categorical() {
     // Create a CSV where most values are non-numeric
     let temp_csv = "value\nabc\ndef\n10\nghi\n";
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stats")
         .arg("-c")
         .arg("value")
@@ -248,7 +248,7 @@ fn test_stats_all_empty() {
     // Empty lines are not parsed as records by the CSV parser
     let temp_csv = "value\n \n \n \n";
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stats")
         .arg("-c")
         .arg("value")
@@ -264,7 +264,7 @@ fn test_stats_single_value() {
     // Create a CSV with a single value
     let temp_csv = "value\n42\n";
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stats")
         .arg("-c")
         .arg("value")
@@ -282,7 +282,7 @@ fn test_stats_percentiles() {
     // Create a CSV with known values to test percentile calculation
     let temp_csv = "value\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n";
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stats")
         .arg("-c")
         .arg("value")
@@ -307,7 +307,7 @@ fn test_stats_top_frequencies() {
     // Create a CSV to test top frequency calculation
     let temp_csv = "city\nNew York\nLos Angeles\nNew York\nChicago\nNew York\nLos Angeles\n";
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stats")
         .arg("-c")
         .arg("city")

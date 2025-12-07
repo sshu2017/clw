@@ -1,10 +1,10 @@
-use assert_cmd::Command;
+use assert_cmd::cargo::cargo_bin_cmd;
 use predicates::prelude::*;
 use std::fs;
 
 #[test]
 fn test_filter_single_value() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("filter")
         .arg("--column")
         .arg("name")
@@ -26,7 +26,7 @@ fn test_filter_single_value() {
 
 #[test]
 fn test_filter_multiple_values() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("filter")
         .arg("--column")
         .arg("name")
@@ -49,7 +49,7 @@ fn test_filter_multiple_values() {
 
 #[test]
 fn test_filter_short_flags() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("filter")
         .arg("-c")
         .arg("city")
@@ -70,7 +70,7 @@ fn test_filter_short_flags() {
 
 #[test]
 fn test_filter_without_keep_header() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("filter")
         .arg("-c")
         .arg("name")
@@ -96,7 +96,7 @@ fn test_filter_without_keep_header() {
 
 #[test]
 fn test_filter_with_keep_header() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("filter")
         .arg("-c")
         .arg("occupation")
@@ -114,7 +114,7 @@ fn test_filter_with_keep_header() {
 fn test_filter_with_piped_input() {
     let csv_content = fs::read("tests/fixtures/sample_comma.csv").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("filter")
         .arg("-c")
         .arg("city")
@@ -130,7 +130,7 @@ fn test_filter_with_piped_input() {
 
 #[test]
 fn test_filter_pipe_delimited() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("filter")
         .arg("-c")
         .arg("product")
@@ -146,7 +146,7 @@ fn test_filter_pipe_delimited() {
 
 #[test]
 fn test_filter_invalid_column() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("filter")
         .arg("-c")
         .arg("invalid_column")
@@ -165,7 +165,7 @@ fn test_filter_invalid_column() {
 
 #[test]
 fn test_filter_no_matches() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("filter")
         .arg("-c")
         .arg("name")
@@ -191,7 +191,7 @@ fn test_filter_no_matches() {
 
 #[test]
 fn test_filter_with_spaces_in_value_list() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("filter")
         .arg("-c")
         .arg("name")
@@ -212,7 +212,7 @@ fn test_filter_with_spaces_in_value_list() {
 
 #[test]
 fn test_filter_numeric_column() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("filter")
         .arg("-c")
         .arg("age")
@@ -237,7 +237,7 @@ fn test_filter_numeric_column() {
 
 #[test]
 fn test_filter_all_rows() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("filter")
         .arg("-c")
         .arg("name")
@@ -260,7 +260,7 @@ fn test_filter_all_rows() {
 
 #[test]
 fn test_filter_single_column_csv() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("filter")
         .arg("-c")
         .arg("username")
@@ -282,7 +282,7 @@ fn test_filter_single_column_csv() {
 
 #[test]
 fn test_filter_case_sensitive() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("filter")
         .arg("-c")
         .arg("name")
@@ -312,7 +312,7 @@ fn test_filter_case_sensitive() {
 
 #[test]
 fn test_filter_no_matches_without_header() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("filter")
         .arg("-c")
         .arg("name")
@@ -338,7 +338,7 @@ fn test_filter_no_matches_without_header() {
 
 #[test]
 fn test_filter_missing_column_flag() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("filter")
         .arg("-v")
         .arg("Alice")
@@ -350,7 +350,7 @@ fn test_filter_missing_column_flag() {
 
 #[test]
 fn test_filter_missing_value_flag() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("filter")
         .arg("-c")
         .arg("name")

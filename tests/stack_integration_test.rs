@@ -1,4 +1,4 @@
-use assert_cmd::Command;
+use assert_cmd::cargo::cargo_bin_cmd;
 use predicates::prelude::*;
 use std::io::Write;
 use tempfile::NamedTempFile;
@@ -16,7 +16,7 @@ fn test_stack_basic_comma_delimited() {
     writeln!(file2, "Charlie,35,Chicago").unwrap();
     writeln!(file2, "Dave,28,Boston").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stack")
         .arg(file1.path())
         .arg(file2.path())
@@ -62,7 +62,7 @@ fn test_stack_pipe_delimited() {
     writeln!(file2, "3|Doohickey|14.99").unwrap();
     writeln!(file2, "4|Thingamajig|24.99").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stack")
         .arg(file1.path())
         .arg(file2.path())
@@ -104,7 +104,7 @@ fn test_stack_different_delimiters() {
     writeln!(file2, "name|age").unwrap();
     writeln!(file2, "Bob|25").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stack")
         .arg(file1.path())
         .arg(file2.path())
@@ -125,7 +125,7 @@ fn test_stack_different_column_count() {
     writeln!(file2, "name,age").unwrap();
     writeln!(file2, "Bob,25").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stack")
         .arg(file1.path())
         .arg(file2.path())
@@ -148,7 +148,7 @@ fn test_stack_different_header_names() {
     writeln!(file2, "name,city").unwrap();
     writeln!(file2, "Bob,Boston").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stack")
         .arg(file1.path())
         .arg(file2.path())
@@ -168,7 +168,7 @@ fn test_stack_single_row_files() {
     writeln!(file2, "id,value").unwrap();
     writeln!(file2, "2,B").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stack")
         .arg(file1.path())
         .arg(file2.path())
@@ -192,7 +192,7 @@ fn test_stack_file_not_found() {
     writeln!(file1, "name,age").unwrap();
     writeln!(file1, "Alice,30").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stack")
         .arg(file1.path())
         .arg("/nonexistent/file.csv")
@@ -213,7 +213,7 @@ fn test_stack_with_empty_values() {
     writeln!(file2, "Charlie,35,Chicago").unwrap();
     writeln!(file2, ",,").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stack")
         .arg(file1.path())
         .arg(file2.path())
@@ -256,7 +256,7 @@ fn test_stack_preserves_order() {
     writeln!(file2, "5,Fifth").unwrap();
     writeln!(file2, "6,Sixth").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stack")
         .arg(file1.path())
         .arg(file2.path())
@@ -314,7 +314,7 @@ fn test_stack_many_columns() {
     writeln!(file2, "col1,col2,col3,col4,col5,col6,col7,col8,col9,col10").unwrap();
     writeln!(file2, "b1,b2,b3,b4,b5,b6,b7,b8,b9,b10").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stack")
         .arg(file1.path())
         .arg(file2.path())
@@ -345,7 +345,7 @@ fn test_stack_header_case_sensitive() {
     writeln!(file2, "name,age").unwrap();
     writeln!(file2, "Bob,25").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stack")
         .arg(file1.path())
         .arg(file2.path())
@@ -365,7 +365,7 @@ fn test_stack_with_quoted_fields() {
     writeln!(file2, "name,description").unwrap();
     writeln!(file2, "Bob,\"Product Manager\"").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stack")
         .arg(file1.path())
         .arg(file2.path())
@@ -397,7 +397,7 @@ fn test_stack_header_only_file() {
     let mut file2 = NamedTempFile::new().unwrap();
     writeln!(file2, "name,age").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("stack")
         .arg(file1.path())
         .arg(file2.path())

@@ -1,4 +1,4 @@
-use assert_cmd::Command;
+use assert_cmd::cargo::cargo_bin_cmd;
 use std::io::Write;
 use tempfile::NamedTempFile;
 
@@ -9,7 +9,7 @@ fn test_peek_basic() {
     writeln!(file, "Alice,30,New York").unwrap();
     writeln!(file, "Bob,25,Los Angeles").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("peek").arg(file.path()).assert().success();
 
     let output = cmd.output().expect("Failed to execute command");
@@ -35,7 +35,7 @@ fn test_peek_with_max_rows() {
         writeln!(file, "{},value{}", i, i).unwrap();
     }
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("peek")
         .arg("--number-rows")
         .arg("5")
@@ -60,7 +60,7 @@ fn test_peek_pipe_delimited() {
     writeln!(file, "1|Widget|9.99").unwrap();
     writeln!(file, "2|Gadget|19.99").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("peek").arg(file.path()).assert().success();
 
     let output = cmd.output().expect("Failed to execute command");
@@ -77,7 +77,7 @@ fn test_peek_single_row() {
     writeln!(file, "col1,col2,col3").unwrap();
     writeln!(file, "A,B,C").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("peek").arg(file.path()).assert().success();
 
     let output = cmd.output().expect("Failed to execute command");
@@ -96,7 +96,7 @@ fn test_peek_empty_values() {
     writeln!(file, "1,,3").unwrap();
     writeln!(file, ",2,").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("peek").arg(file.path()).assert().success();
 
     let output = cmd.output().expect("Failed to execute command");
@@ -114,7 +114,7 @@ fn test_peek_long_values() {
     writeln!(file, "short,very_long_column_name").unwrap();
     writeln!(file, "A,This is a very long value").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("peek").arg(file.path()).assert().success();
 
     let output = cmd.output().expect("Failed to execute command");
@@ -139,7 +139,7 @@ fn test_peek_piped_input() {
 
     let file_content = std::fs::read_to_string(file.path()).unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("peek").write_stdin(file_content).assert().success();
 
     let output = cmd.output().expect("Failed to execute command");
@@ -155,7 +155,7 @@ fn test_peek_many_columns() {
     writeln!(file, "a,b,c,d,e,f,g,h").unwrap();
     writeln!(file, "1,2,3,4,5,6,7,8").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("peek").arg(file.path()).assert().success();
 
     let output = cmd.output().expect("Failed to execute command");
@@ -173,7 +173,7 @@ fn test_peek_header_separator() {
     writeln!(file, "col1,col2").unwrap();
     writeln!(file, "A,B").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("peek").arg(file.path()).assert().success();
 
     let output = cmd.output().expect("Failed to execute command");
@@ -193,7 +193,7 @@ fn test_peek_with_quoted_fields() {
     writeln!(file, "Alice,\"Software Engineer\"").unwrap();
     writeln!(file, "Bob,\"Product Manager\"").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("peek").arg(file.path()).assert().success();
 
     let output = cmd.output().expect("Failed to execute command");
@@ -214,7 +214,7 @@ fn test_peek_max_rows_zero() {
     writeln!(file, "1,A").unwrap();
     writeln!(file, "2,B").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("peek")
         .arg("--number-rows")
         .arg("0")
@@ -241,7 +241,7 @@ fn test_peek_single_column() {
     writeln!(file, "A").unwrap();
     writeln!(file, "B").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("peek").arg(file.path()).assert().success();
 
     let output = cmd.output().expect("Failed to execute command");

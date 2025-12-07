@@ -1,10 +1,10 @@
-use assert_cmd::Command;
+use assert_cmd::cargo::cargo_bin_cmd;
 use predicates::prelude::*;
 use std::fs;
 
 #[test]
 fn test_info_clean_csv() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("info")
         .arg("tests/fixtures/sample_comma.csv")
         .assert()
@@ -21,7 +21,7 @@ fn test_info_clean_csv() {
 
 #[test]
 fn test_info_pipe_delimited() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("info")
         .arg("tests/fixtures/sample_pipe.csv")
         .assert()
@@ -31,7 +31,7 @@ fn test_info_pipe_delimited() {
 
 #[test]
 fn test_info_dirty_csv_with_inconsistent_rows() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("info")
         .arg("tests/fixtures/dirty_inconsistent.csv")
         .assert()
@@ -54,7 +54,7 @@ fn test_info_dirty_csv_with_inconsistent_rows() {
 fn test_info_with_piped_input() {
     let csv_content = fs::read("tests/fixtures/sample_comma.csv").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("info")
         .write_stdin(csv_content)
         .assert()
@@ -64,7 +64,7 @@ fn test_info_with_piped_input() {
 
 #[test]
 fn test_info_empty_file() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("info")
         .arg("tests/fixtures/empty.csv")
         .assert()
@@ -76,7 +76,7 @@ fn test_info_empty_file() {
 
 #[test]
 fn test_info_single_column() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("info")
         .arg("tests/fixtures/single_column.csv")
         .assert()
@@ -87,7 +87,7 @@ fn test_info_single_column() {
 
 #[test]
 fn test_info_many_inconsistent_rows_truncated() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("info")
         .arg("tests/fixtures/very_dirty.csv")
         .assert()

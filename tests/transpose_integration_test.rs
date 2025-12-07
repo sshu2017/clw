@@ -1,4 +1,4 @@
-use assert_cmd::Command;
+use assert_cmd::cargo::cargo_bin_cmd;
 use predicates::prelude::*;
 use std::io::Write;
 use tempfile::NamedTempFile;
@@ -10,7 +10,7 @@ fn test_transpose_basic() {
     writeln!(file, "Alice,30,New York").unwrap();
     writeln!(file, "Bob,25,Los Angeles").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("transpose").arg(file.path()).assert().success();
 
     let output = cmd.output().expect("Failed to execute command");
@@ -40,7 +40,7 @@ fn test_transpose_pipe_delimited() {
     writeln!(file, "1|Widget|9.99").unwrap();
     writeln!(file, "2|Gadget|19.99").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("transpose").arg(file.path()).assert().success();
 
     let output = cmd.output().expect("Failed to execute command");
@@ -65,7 +65,7 @@ fn test_transpose_single_row() {
     let mut file = NamedTempFile::new().unwrap();
     writeln!(file, "col1,col2,col3").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("transpose").arg(file.path()).assert().success();
 
     let output = cmd.output().expect("Failed to execute command");
@@ -87,7 +87,7 @@ fn test_transpose_single_column() {
     writeln!(file, "B").unwrap();
     writeln!(file, "C").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("transpose").arg(file.path()).assert().success();
 
     let output = cmd.output().expect("Failed to execute command");
@@ -106,7 +106,7 @@ fn test_transpose_with_empty_values() {
     writeln!(file, "1,,3").unwrap();
     writeln!(file, ",2,").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("transpose").arg(file.path()).assert().success();
 
     let output = cmd.output().expect("Failed to execute command");
@@ -126,7 +126,7 @@ fn test_transpose_piped_input() {
 
     let file_content = std::fs::read_to_string(file.path()).unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("transpose")
         .write_stdin(file_content)
         .assert()
@@ -147,7 +147,7 @@ fn test_transpose_jagged_rows() {
     writeln!(file, "1,2").unwrap();
     writeln!(file, "3,4,5,6").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("transpose").arg(file.path()).assert().success();
 
     let output = cmd.output().expect("Failed to execute command");
@@ -167,7 +167,7 @@ fn test_transpose_with_quoted_fields() {
     writeln!(file, "Alice,\"Software Engineer\"").unwrap();
     writeln!(file, "Bob,\"Product Manager\"").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("transpose").arg(file.path()).assert().success();
 
     let output = cmd.output().expect("Failed to execute command");
@@ -187,7 +187,7 @@ fn test_transpose_with_quoted_fields() {
 fn test_transpose_empty_file() {
     let file = NamedTempFile::new().unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("transpose")
         .arg(file.path())
         .assert()
@@ -213,7 +213,7 @@ fn test_transpose_large_matrix() {
         .unwrap();
     }
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("transpose").arg(file.path()).assert().success();
 
     let output = cmd.output().expect("Failed to execute command");

@@ -1,11 +1,11 @@
-use assert_cmd::Command;
+use assert_cmd::cargo::cargo_bin_cmd;
 use predicates::prelude::*;
 use std::fs;
 
 #[test]
 fn test_freq_basic() {
     // Test basic frequency counting (default: sorted by frequency high to low)
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("freq")
         .arg("--column")
         .arg("city")
@@ -27,7 +27,7 @@ fn test_freq_with_duplicates() {
     // Create CSV with duplicate values
     let temp_csv = "city\nNew York\nLos Angeles\nNew York\nChicago\nNew York\nLos Angeles\n";
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("freq")
         .arg("-c")
         .arg("city")
@@ -59,7 +59,7 @@ fn test_freq_with_duplicates() {
 fn test_freq_with_plot() {
     let temp_csv = "city\nNew York\nLos Angeles\nNew York\nChicago\nNew York\n";
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("freq")
         .arg("-c")
         .arg("city")
@@ -80,7 +80,7 @@ fn test_freq_with_plot() {
 
 #[test]
 fn test_freq_short_flags() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("freq")
         .arg("-c")
         .arg("occupation")
@@ -95,7 +95,7 @@ fn test_freq_short_flags() {
 fn test_freq_sort_index_alphabetic() {
     let temp_csv = "name\nCharlie\nAlice\nBob\nAlice\nCharlie\nCharlie\n";
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("freq")
         .arg("-c")
         .arg("name")
@@ -124,7 +124,7 @@ fn test_freq_sort_index_alphabetic() {
 fn test_freq_sort_index_numeric() {
     let temp_csv = "value\n30\n10\n25\n30\n10\n10\n";
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("freq")
         .arg("-c")
         .arg("value")
@@ -148,7 +148,7 @@ fn test_freq_sort_value() {
     // Test default sorting (by frequency, high to low)
     let temp_csv = "name\nAlice\nBob\nAlice\nCharlie\nAlice\nBob\n";
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("freq")
         .arg("-c")
         .arg("name")
@@ -179,7 +179,7 @@ fn test_freq_sort_value() {
 fn test_freq_with_piped_input() {
     let csv_content = fs::read("tests/fixtures/sample_comma.csv").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("freq")
         .arg("-c")
         .arg("occupation")
@@ -193,7 +193,7 @@ fn test_freq_with_piped_input() {
 
 #[test]
 fn test_freq_pipe_delimited() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("freq")
         .arg("-c")
         .arg("category")
@@ -207,7 +207,7 @@ fn test_freq_pipe_delimited() {
 
 #[test]
 fn test_freq_invalid_column() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("freq")
         .arg("-c")
         .arg("invalid_column")
@@ -226,7 +226,7 @@ fn test_freq_invalid_column() {
 fn test_freq_single_value() {
     let temp_csv = "value\n42\n";
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("freq")
         .arg("-c")
         .arg("value")
@@ -241,7 +241,7 @@ fn test_freq_single_value() {
 fn test_freq_all_same_value() {
     let temp_csv = "name\nAlice\nAlice\nAlice\n";
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("freq")
         .arg("-c")
         .arg("name")
@@ -256,7 +256,7 @@ fn test_freq_all_same_value() {
 fn test_freq_with_plot_alignment() {
     let temp_csv = "city\nNew York\nLA\nNew York\nChicago\nNew York\nLA\n";
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("freq")
         .arg("-c")
         .arg("city")
@@ -300,7 +300,7 @@ fn test_freq_default_sort_is_by_frequency() {
     // Test that default behavior (no sort flags) sorts by frequency
     let temp_csv = "value\nA\nB\nA\nC\nA\nB\n";
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("freq")
         .arg("-c")
         .arg("value")
@@ -326,7 +326,7 @@ fn test_freq_default_sort_is_by_frequency() {
 
 #[test]
 fn test_freq_missing_column_flag() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("freq")
         .arg("tests/fixtures/sample_comma.csv")
         .assert()
@@ -340,7 +340,7 @@ fn test_freq_with_empty_values() {
     // Using multi-column CSV where one column has empty values
     let temp_csv = "name,value\nAlice,A\nBob,\nCharlie,B\nDave,A\nEve,\nFrank,A\n";
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("freq")
         .arg("-c")
         .arg("value")
@@ -375,7 +375,7 @@ fn test_freq_numeric_sorting() {
     // Test that numeric sorting works correctly (not lexicographic)
     let temp_csv = "number\n100\n20\n3\n100\n20\n100\n";
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("freq")
         .arg("-c")
         .arg("number")

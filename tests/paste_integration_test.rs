@@ -1,4 +1,4 @@
-use assert_cmd::Command;
+use assert_cmd::cargo::cargo_bin_cmd;
 use predicates::prelude::*;
 use std::io::Write;
 use tempfile::NamedTempFile;
@@ -18,7 +18,7 @@ fn test_paste_basic_comma_delimited() {
     writeln!(file2, "Los Angeles,Designer").unwrap();
     writeln!(file2, "Chicago,Manager").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("paste")
         .arg(file1.path())
         .arg(file2.path())
@@ -65,7 +65,7 @@ fn test_paste_pipe_delimited() {
     writeln!(file2, "9.99|Tools").unwrap();
     writeln!(file2, "19.99|Electronics").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("paste")
         .arg(file1.path())
         .arg(file2.path())
@@ -104,7 +104,7 @@ fn test_paste_different_delimiters() {
     writeln!(file2, "city|occupation").unwrap();
     writeln!(file2, "New York|Engineer").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("paste")
         .arg(file1.path())
         .arg(file2.path())
@@ -128,7 +128,7 @@ fn test_paste_different_row_counts() {
     writeln!(file2, "New York").unwrap();
     writeln!(file2, "Los Angeles").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("paste")
         .arg(file1.path())
         .arg(file2.path())
@@ -147,7 +147,7 @@ fn test_paste_single_row() {
     writeln!(file2, "age").unwrap();
     writeln!(file2, "30").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("paste")
         .arg(file1.path())
         .arg(file2.path())
@@ -176,7 +176,7 @@ fn test_paste_empty_values() {
     writeln!(file2, ",Engineer").unwrap();
     writeln!(file2, "Boston,").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("paste")
         .arg(file1.path())
         .arg(file2.path())
@@ -209,7 +209,7 @@ fn test_paste_single_column_files() {
     writeln!(file2, "X").unwrap();
     writeln!(file2, "Y").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("paste")
         .arg(file1.path())
         .arg(file2.path())
@@ -234,7 +234,7 @@ fn test_paste_many_columns() {
     writeln!(file2, "d,e,f").unwrap();
     writeln!(file2, "4,5,6").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("paste")
         .arg(file1.path())
         .arg(file2.path())
@@ -268,7 +268,7 @@ fn test_paste_preserves_order() {
     writeln!(file2, "B").unwrap();
     writeln!(file2, "C").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("paste")
         .arg(file1.path())
         .arg(file2.path())
@@ -296,7 +296,7 @@ fn test_paste_with_quoted_fields() {
     writeln!(file2, "role").unwrap();
     writeln!(file2, "\"Senior Engineer\"").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("paste")
         .arg(file1.path())
         .arg(file2.path())
@@ -320,7 +320,7 @@ fn test_paste_file_not_found() {
     writeln!(file1, "name").unwrap();
     writeln!(file1, "Alice").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("paste")
         .arg(file1.path())
         .arg("/nonexistent/file.csv")
@@ -337,7 +337,7 @@ fn test_paste_header_only_files() {
     let mut file2 = NamedTempFile::new().unwrap();
     writeln!(file2, "col3,col4").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("paste")
         .arg(file1.path())
         .arg(file2.path())
@@ -368,7 +368,7 @@ fn test_paste_duplicate_column_names() {
     writeln!(file2, "id,value").unwrap();
     writeln!(file2, "2,B").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("paste")
         .arg(file1.path())
         .arg(file2.path())
@@ -400,7 +400,7 @@ fn test_paste_large_number_of_rows() {
         writeln!(file2, "{}", i).unwrap();
     }
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("paste")
         .arg(file1.path())
         .arg(file2.path())

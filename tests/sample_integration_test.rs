@@ -1,10 +1,10 @@
-use assert_cmd::Command;
+use assert_cmd::cargo::cargo_bin_cmd;
 use predicates::prelude::*;
 use std::fs;
 
 #[test]
 fn test_sample_with_row_count() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("sample")
         .arg("--rows")
         .arg("2")
@@ -22,7 +22,7 @@ fn test_sample_with_row_count() {
 
 #[test]
 fn test_sample_short_flags() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("sample")
         .arg("-r")
         .arg("1")
@@ -41,7 +41,7 @@ fn test_sample_short_flags() {
 fn test_sample_with_piped_input() {
     let csv_content = fs::read("tests/fixtures/sample_comma.csv").unwrap();
 
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("sample")
         .arg("--rows")
         .arg("1")
@@ -53,7 +53,7 @@ fn test_sample_with_piped_input() {
 
 #[test]
 fn test_sample_more_rows_than_available() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("sample")
         .arg("--rows")
         .arg("100")
@@ -73,7 +73,7 @@ fn test_sample_more_rows_than_available() {
 
 #[test]
 fn test_sample_pipe_delimited() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("sample")
         .arg("--rows")
         .arg("1")
@@ -85,7 +85,7 @@ fn test_sample_pipe_delimited() {
 
 #[test]
 fn test_sample_missing_rows_argument() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("sample")
         .arg("tests/fixtures/sample_comma.csv")
         .assert()
@@ -95,7 +95,7 @@ fn test_sample_missing_rows_argument() {
 
 #[test]
 fn test_sample_zero_rows() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("sample")
         .arg("--rows")
         .arg("0")
@@ -112,7 +112,7 @@ fn test_sample_zero_rows() {
 
 #[test]
 fn test_sample_with_no_header_flag() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("sample")
         .arg("--rows")
         .arg("2")
@@ -136,7 +136,7 @@ fn test_sample_with_no_header_flag() {
 
 #[test]
 fn test_sample_with_header_default() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("sample")
         .arg("--rows")
         .arg("1")
@@ -154,7 +154,7 @@ fn test_sample_with_header_default() {
 
 #[test]
 fn test_sample_no_header_pipe_delimited() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("sample")
         .arg("--rows")
         .arg("1")
@@ -178,7 +178,7 @@ fn test_sample_no_header_pipe_delimited() {
 
 #[test]
 fn test_sample_no_header_zero_rows() {
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("sample")
         .arg("--rows")
         .arg("0")
@@ -197,7 +197,7 @@ fn test_sample_no_header_zero_rows() {
 #[test]
 fn test_sample_with_seed_reproducibility() {
     // Run sample twice with the same seed and verify we get identical output
-    let mut cmd1 = Command::cargo_bin("clw").unwrap();
+    let mut cmd1 = cargo_bin_cmd!("clw");
     let output1 = cmd1
         .arg("sample")
         .arg("--rows")
@@ -208,7 +208,7 @@ fn test_sample_with_seed_reproducibility() {
         .output()
         .expect("Failed to execute command");
 
-    let mut cmd2 = Command::cargo_bin("clw").unwrap();
+    let mut cmd2 = cargo_bin_cmd!("clw");
     let output2 = cmd2
         .arg("sample")
         .arg("--rows")
@@ -232,7 +232,7 @@ fn test_sample_with_seed_reproducibility() {
 fn test_sample_with_different_seeds() {
     // Run sample with different seeds - output should likely be different
     // (though there's a tiny chance they could be the same by random chance)
-    let mut cmd1 = Command::cargo_bin("clw").unwrap();
+    let mut cmd1 = cargo_bin_cmd!("clw");
     let output1 = cmd1
         .arg("sample")
         .arg("--rows")
@@ -243,7 +243,7 @@ fn test_sample_with_different_seeds() {
         .output()
         .expect("Failed to execute command");
 
-    let mut cmd2 = Command::cargo_bin("clw").unwrap();
+    let mut cmd2 = cargo_bin_cmd!("clw");
     let output2 = cmd2
         .arg("sample")
         .arg("--rows")
@@ -272,7 +272,7 @@ fn test_sample_with_different_seeds() {
 #[test]
 fn test_sample_with_default_seed() {
     // Test that default seed (67) works
-    let mut cmd = Command::cargo_bin("clw").unwrap();
+    let mut cmd = cargo_bin_cmd!("clw");
     cmd.arg("sample")
         .arg("--rows")
         .arg("2")
@@ -290,7 +290,7 @@ fn test_sample_with_default_seed() {
 #[test]
 fn test_sample_default_seed_reproducibility() {
     // Verify that default seed (67) produces reproducible results
-    let mut cmd1 = Command::cargo_bin("clw").unwrap();
+    let mut cmd1 = cargo_bin_cmd!("clw");
     let output1 = cmd1
         .arg("sample")
         .arg("--rows")
@@ -299,7 +299,7 @@ fn test_sample_default_seed_reproducibility() {
         .output()
         .expect("Failed to execute command");
 
-    let mut cmd2 = Command::cargo_bin("clw").unwrap();
+    let mut cmd2 = cargo_bin_cmd!("clw");
     let output2 = cmd2
         .arg("sample")
         .arg("--rows")

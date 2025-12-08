@@ -71,6 +71,11 @@ jobs:
         working-directory: python
         run: |
           pip install dist/*.whl
+          # Copy the locally-built binary to the expected location (no GitHub Release exists during CI)
+          SITE_PACKAGES=$(python -c "import site; print(site.getsitepackages()[0])")
+          mkdir -p "$SITE_PACKAGES/clw_installer/bin"
+          cp ../target/debug/clw "$SITE_PACKAGES/clw_installer/bin/clw"
+          chmod +x "$SITE_PACKAGES/clw_installer/bin/clw"
           clw --version || (echo "CLI failed" && exit 1)
 
       - name: Test installer (pip install) - Windows
@@ -80,5 +85,10 @@ jobs:
         run: |
           $wheel = Get-ChildItem dist/*.whl | Select-Object -First 1
           pip install $wheel.FullName
+          # Copy the locally-built binary to the expected location (no GitHub Release exists during CI)
+          $sitePackages = python -c "import site; print(site.getsitepackages()[0])"
+          $binDir = Join-Path $sitePackages "clw_installer\bin"
+          New-Item -ItemType Directory -Force -Path $binDir | Out-Null
+          Copy-Item "..\target\debug\clw.exe" -Destination (Join-Path $binDir "clw.exe")
           clw --version
           if ($LASTEXITCODE -ne 0) { Write-Error "CLI failed"; exit 1 }

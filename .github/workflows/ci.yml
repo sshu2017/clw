@@ -70,12 +70,29 @@ jobs:
         if: runner.os != 'Windows'
         working-directory: python
         run: |
+          set -e
           pip install dist/*.whl
+
           # Copy the locally-built binary to the expected location (no GitHub Release exists during CI)
           SITE_PACKAGES=$(python -c "import site; print(site.getsitepackages()[0])")
-          mkdir -p "$SITE_PACKAGES/clw_installer/bin"
-          cp ../target/debug/clw "$SITE_PACKAGES/clw_installer/bin/clw"
-          chmod +x "$SITE_PACKAGES/clw_installer/bin/clw"
+          echo "Site packages: $SITE_PACKAGES"
+
+          BIN_DIR="$SITE_PACKAGES/clw_installer/bin"
+          echo "Creating bin dir: $BIN_DIR"
+          mkdir -p "$BIN_DIR"
+
+          SRC_BINARY="../target/debug/clw"
+          echo "Source binary exists: $(test -f $SRC_BINARY && echo yes || echo no)"
+          if [ ! -f "$SRC_BINARY" ]; then
+            echo "Binary not found at $SRC_BINARY"
+            exit 1
+          fi
+
+          echo "Copying to: $BIN_DIR/clw"
+          cp "$SRC_BINARY" "$BIN_DIR/clw"
+          chmod +x "$BIN_DIR/clw"
+          echo "Binary copied: $(test -f $BIN_DIR/clw && echo yes || echo no)"
+
           clw --version || (echo "CLI failed" && exit 1)
 
       - name: Test installer (pip install) - Windows
@@ -83,12 +100,29 @@ jobs:
         working-directory: python
         shell: pwsh
         run: |
+          $ErrorActionPreference = "Stop"
           $wheel = Get-ChildItem dist/*.whl | Select-Object -First 1
           pip install $wheel.FullName
+
           # Copy the locally-built binary to the expected location (no GitHub Release exists during CI)
           $sitePackages = python -c "import site; print(site.getsitepackages()[0])"
+          Write-Host "Site packages: $sitePackages"
+
           $binDir = Join-Path $sitePackages "clw_installer\bin"
+          Write-Host "Creating bin dir: $binDir"
           New-Item -ItemType Directory -Force -Path $binDir | Out-Null
-          Copy-Item "..\target\debug\clw.exe" -Destination (Join-Path $binDir "clw.exe")
+
+          $srcBinary = "..\target\debug\clw.exe"
+          Write-Host "Source binary exists: $(Test-Path $srcBinary)"
+          if (-not (Test-Path $srcBinary)) {
+            Write-Error "Binary not found at $srcBinary"
+            exit 1
+          }
+
+          $destBinary = Join-Path $binDir "clw.exe"
+          Write-Host "Copying to: $destBinary"
+          Copy-Item $srcBinary -Destination $destBinary
+          Write-Host "Binary copied: $(Test-Path $destBinary)"
+
           clw --version
           if ($LASTEXITCODE -ne 0) { Write-Error "CLI failed"; exit 1 }

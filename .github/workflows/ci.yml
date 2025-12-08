@@ -74,8 +74,8 @@ jobs:
           pip install dist/*.whl
 
           # Copy the locally-built binary to the expected location (no GitHub Release exists during CI)
-          # Use the actual package location instead of site.getsitepackages()
-          PKG_DIR=$(python -c "import clw_installer; import os; print(os.path.dirname(clw_installer.__file__))")
+          # Use pip show to find the installed package location (not the source directory)
+          PKG_DIR=$(pip show clw | grep "Location:" | cut -d' ' -f2)/clw_installer
           echo "Package dir: $PKG_DIR"
 
           BIN_DIR="$PKG_DIR/bin"
@@ -106,8 +106,10 @@ jobs:
           pip install $wheel.FullName
 
           # Copy the locally-built binary to the expected location (no GitHub Release exists during CI)
-          # Use the actual package location instead of site.getsitepackages()
-          $pkgDir = python -c "import clw_installer; import os; print(os.path.dirname(clw_installer.__file__))"
+          # Use pip show to find the installed package location (not the source directory)
+          $pipShowOutput = pip show clw
+          $location = ($pipShowOutput | Select-String "Location:").ToString().Split(" ")[1]
+          $pkgDir = Join-Path $location "clw_installer"
           Write-Host "Package dir: $pkgDir"
 
           $binDir = Join-Path $pkgDir "bin"

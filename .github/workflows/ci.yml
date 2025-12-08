@@ -74,10 +74,11 @@ jobs:
           pip install dist/*.whl
 
           # Copy the locally-built binary to the expected location (no GitHub Release exists during CI)
-          SITE_PACKAGES=$(python -c "import site; print(site.getsitepackages()[0])")
-          echo "Site packages: $SITE_PACKAGES"
+          # Use the actual package location instead of site.getsitepackages()
+          PKG_DIR=$(python -c "import clw_installer; import os; print(os.path.dirname(clw_installer.__file__))")
+          echo "Package dir: $PKG_DIR"
 
-          BIN_DIR="$SITE_PACKAGES/clw_installer/bin"
+          BIN_DIR="$PKG_DIR/bin"
           echo "Creating bin dir: $BIN_DIR"
           mkdir -p "$BIN_DIR"
 
@@ -105,10 +106,11 @@ jobs:
           pip install $wheel.FullName
 
           # Copy the locally-built binary to the expected location (no GitHub Release exists during CI)
-          $sitePackages = python -c "import site; print(site.getsitepackages()[0])"
-          Write-Host "Site packages: $sitePackages"
+          # Use the actual package location instead of site.getsitepackages()
+          $pkgDir = python -c "import clw_installer; import os; print(os.path.dirname(clw_installer.__file__))"
+          Write-Host "Package dir: $pkgDir"
 
-          $binDir = Join-Path $sitePackages "clw_installer\bin"
+          $binDir = Join-Path $pkgDir "bin"
           Write-Host "Creating bin dir: $binDir"
           New-Item -ItemType Directory -Force -Path $binDir | Out-Null
 

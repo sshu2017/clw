@@ -4,8 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "clw-csv"
-version = "0.1.7"  # Bump automatically with your CI workflow
+version = "0.1.8"  # Bump automatically with your CI workflow
 description = "CLW (CSV Light Wizard) - A blazing-fast CSV/TSV manipulation tool"
+readme = "README.md"
 requires-python = ">=3.7"
 license = "MIT"
 

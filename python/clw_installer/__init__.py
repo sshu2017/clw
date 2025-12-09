@@ -5,7 +5,7 @@ This is a Python wrapper that downloads and manages the pre-built
 Rust binary for your platform.
 """
 
-__version__ = "0.1.7"
+__version__ = "0.1.8"
 __author__ = "CLW Contributors"
 __license__ = "MIT"
 

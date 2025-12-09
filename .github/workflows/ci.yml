@@ -75,7 +75,7 @@ jobs:
 
           # Copy the locally-built binary to the expected location (no GitHub Release exists during CI)
           # Use pip show to find the installed package location (not the source directory)
-          PKG_DIR=$(pip show clw | grep "Location:" | cut -d' ' -f2)/clw_installer
+          PKG_DIR=$(pip show clw-csv | grep "Location:" | cut -d' ' -f2)/clw_installer
           echo "Package dir: $PKG_DIR"
 
           BIN_DIR="$PKG_DIR/bin"
@@ -107,7 +107,7 @@ jobs:
 
           # Copy the locally-built binary to the expected location (no GitHub Release exists during CI)
           # Use pip show to find the installed package location (not the source directory)
-          $pipShowOutput = pip show clw
+          $pipShowOutput = pip show clw-csv
           $location = ($pipShowOutput | Select-String "Location:").ToString().Split(" ")[1]
           $pkgDir = Join-Path $location "clw_installer"
           Write-Host "Package dir: $pkgDir"

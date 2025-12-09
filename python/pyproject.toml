@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "clw"
+name = "clw-csv"
 version = "0.1.5"  # Bump automatically with your CI workflow
 description = "CLW (CSV Light Wizard) - A blazing-fast CSV/TSV manipulation tool"
 requires-python = ">=3.7"

@@ -17,7 +17,7 @@ GITHUB_REPO = "sshu2017/clw"
 def get_package_version():
     """Return the installed wheel version (e.g. '0.1.4')."""
     try:
-        return pkg_version("clw")
+        return pkg_version("clw-csv")
     except PackageNotFoundError:
         print("ERROR: Unable to determine package version for 'clw'.", file=sys.stderr)
         sys.exit(1)

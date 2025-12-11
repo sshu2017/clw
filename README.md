@@ -23,7 +23,7 @@ CLW is a blazing-fast CSV manipulation tool written in Rust, designed to make wo
 
 ### Pip install (recommended)
 ```bash
-pip install clw
+pip install clw-csv
 ```
 
 ### From Source

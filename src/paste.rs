@@ -1,7 +1,7 @@
-use crate::utils::{detect_delimiter, input_reader};
+use crate::utils::{csv_writer, detect_delimiter, input_reader};
 use csv::ReaderBuilder;
 use std::error::Error;
-use std::io::{self, Write};
+use std::io;
 
 pub fn paste(file1_path: &str, file2_path: &str) -> Result<(), Box<dyn Error>> {
     // Read first file
@@ -35,14 +35,13 @@ pub fn paste(file1_path: &str, file2_path: &str) -> Result<(), Box<dyn Error>> {
         .into());
     }
 
-    // Use buffered output for performance
+    // Use CSV writer for proper quoting
     let stdout = io::stdout();
-    let mut writer = io::BufWriter::new(stdout.lock());
-    let delim_str = delimiter1.to_string();
+    let mut writer = csv_writer(stdout.lock(), delimiter1);
 
     // Combine and write headers
     let combined_header: Vec<&str> = headers1.iter().chain(headers2.iter()).collect();
-    writeln!(writer, "{}", combined_header.join(&delim_str))?;
+    writer.write_record(&combined_header)?;
 
     // Stream records from both files simultaneously
     let mut iter1 = csv1.records();
@@ -54,7 +53,7 @@ pub fn paste(file1_path: &str, file2_path: &str) -> Result<(), Box<dyn Error>> {
             (Some(Ok(record1)), Some(Ok(record2))) => {
                 // Combine and write row
                 let combined_row: Vec<&str> = record1.iter().chain(record2.iter()).collect();
-                writeln!(writer, "{}", combined_row.join(&delim_str))?;
+                writer.write_record(&combined_row)?;
                 row_num += 1;
             }
             (None, None) => break, // Both files ended at same time - good!

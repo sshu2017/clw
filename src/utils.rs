@@ -1,7 +1,8 @@
 use atty::{is, Stream};
+use csv::WriterBuilder;
 use std::error::Error;
 use std::fs::File;
-use std::io::{self, BufRead, BufReader};
+use std::io::{self, BufRead, BufReader, Write};
 
 pub fn input_reader(path: Option<&str>) -> Box<dyn BufRead> {
     match path {
@@ -67,6 +68,13 @@ pub fn detect_delimiter(reader: &mut dyn BufRead) -> Result<char, Box<dyn Error>
     let delimiter = if counts[0].1 > 0 { counts[0].0 } else { ',' };
 
     Ok(delimiter)
+}
+
+/// Create a CSV writer with the specified delimiter, writing to the given writer.
+pub fn csv_writer<W: Write>(writer: W, delimiter: char) -> csv::Writer<W> {
+    WriterBuilder::new()
+        .delimiter(delimiter as u8)
+        .from_writer(writer)
 }
 
 #[cfg(test)]

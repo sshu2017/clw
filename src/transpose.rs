@@ -1,6 +1,7 @@
-use crate::utils::{detect_delimiter, input_reader};
+use crate::utils::{csv_writer, detect_delimiter, input_reader};
 use csv::ReaderBuilder;
 use std::error::Error;
+use std::io;
 
 pub fn transpose(path: Option<&str>) -> Result<(), Box<dyn Error>> {
     // Read input
@@ -29,6 +30,10 @@ pub fn transpose(path: Option<&str>) -> Result<(), Box<dyn Error>> {
     // Find the maximum number of columns
     let max_cols = rows.iter().map(|r| r.len()).max().unwrap_or(0);
 
+    // Create CSV writer for proper quoting
+    let stdout = io::stdout();
+    let mut writer = csv_writer(stdout.lock(), delimiter);
+
     // Transpose: rows become columns, columns become rows
     for col_idx in 0..max_cols {
         let transposed_row: Vec<String> = rows
@@ -40,7 +45,7 @@ pub fn transpose(path: Option<&str>) -> Result<(), Box<dyn Error>> {
             })
             .collect();
 
-        println!("{}", transposed_row.join(&delimiter.to_string()));
+        writer.write_record(&transposed_row)?;
     }
 
     Ok(())

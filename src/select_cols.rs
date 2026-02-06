@@ -1,4 +1,4 @@
-use crate::utils::{detect_delimiter, input_reader};
+use crate::utils::{csv_writer, detect_delimiter, input_reader};
 use colored::Colorize;
 use csv::ReaderBuilder;
 use std::collections::HashSet;
@@ -90,13 +90,12 @@ pub fn select_cols(path: Option<&str>, columns: &str) -> Result<(), Box<dyn Erro
         }
     }
 
-    // Use buffered output for performance
+    // Use CSV writer for proper quoting
     let stdout = io::stdout();
-    let mut writer = io::BufWriter::new(stdout.lock());
-    let delim_str = delimiter.to_string();
+    let mut writer = csv_writer(stdout.lock(), delimiter);
 
     // Print selected headers
-    writeln!(writer, "{}", requested_cols.join(&delim_str))?;
+    writer.write_record(&requested_cols)?;
 
     // Print selected columns for each row
     for result in csv.records() {
@@ -105,7 +104,7 @@ pub fn select_cols(path: Option<&str>, columns: &str) -> Result<(), Box<dyn Erro
             .iter()
             .map(|&idx| record.get(idx).unwrap_or(""))
             .collect();
-        writeln!(writer, "{}", selected_values.join(&delim_str))?;
+        writer.write_record(&selected_values)?;
     }
 
     writer.flush()?;

@@ -1,7 +1,8 @@
-use crate::utils::{detect_delimiter, input_reader};
+use crate::utils::{csv_writer, detect_delimiter, input_reader};
 use csv::ReaderBuilder;
 use std::collections::HashSet;
 use std::error::Error;
+use std::io;
 
 pub fn filter_rows(
     path: Option<&str>,
@@ -33,15 +34,13 @@ pub fn filter_rows(
     // Parse the filter values into a HashSet for efficient lookup
     let filter_values: HashSet<String> = values.split(',').map(|v| v.trim().to_string()).collect();
 
+    // Create CSV writer for proper quoting
+    let stdout = io::stdout();
+    let mut writer = csv_writer(stdout.lock(), delimiter);
+
     // Print header if requested
     if include_header {
-        println!(
-            "{}",
-            headers
-                .iter()
-                .collect::<Vec<_>>()
-                .join(&delimiter.to_string())
-        );
+        writer.write_record(&headers.iter().collect::<Vec<_>>())?;
     }
 
     // Filter and print matching rows
@@ -52,13 +51,7 @@ pub fn filter_rows(
         // Check if the value in the specified column matches any filter value
         if let Some(cell_value) = record.get(col_idx) {
             if filter_values.contains(cell_value) {
-                println!(
-                    "{}",
-                    record
-                        .iter()
-                        .collect::<Vec<_>>()
-                        .join(&delimiter.to_string())
-                );
+                writer.write_record(&record.iter().collect::<Vec<_>>())?;
                 match_count += 1;
             }
         }

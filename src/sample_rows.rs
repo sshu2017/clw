@@ -1,9 +1,10 @@
-use crate::utils::{detect_delimiter, input_reader};
+use crate::utils::{csv_writer, detect_delimiter, input_reader};
 use csv::ReaderBuilder;
 use rand::rngs::StdRng;
 use rand::Rng;
 use rand::SeedableRng;
 use std::error::Error;
+use std::io;
 
 pub fn sample_rows(
     path: Option<&str>,
@@ -21,30 +22,28 @@ pub fn sample_rows(
 
     let headers = csv.headers()?.clone();
 
+    // Create CSV writer for proper quoting
+    let stdout = io::stdout();
+    let mut writer = csv_writer(stdout.lock(), delimiter);
+
     // Print headers if requested
     if include_header {
-        println!(
-            "{}",
-            headers
-                .iter()
-                .collect::<Vec<_>>()
-                .join(&delimiter.to_string())
-        );
+        writer.write_record(&headers.iter().collect::<Vec<_>>())?;
     }
 
     // Use reservoir sampling with seeded RNG
-    reservoir_sample(&mut csv, n, seed, &delimiter)?;
+    reservoir_sample(&mut csv, n, seed, &mut writer)?;
 
     Ok(())
 }
 
 // Reservoir sampling: guarantees exactly k samples with equal probability
 // Uses seeded RNG for reproducible results
-fn reservoir_sample(
+fn reservoir_sample<W: io::Write>(
     csv: &mut csv::Reader<Box<dyn std::io::BufRead>>,
     k: usize,
     seed: u64,
-    delimiter: &char,
+    writer: &mut csv::Writer<W>,
 ) -> Result<(), Box<dyn Error>> {
     let mut rng = StdRng::seed_from_u64(seed);
     let mut reservoir: Vec<csv::StringRecord> = Vec::with_capacity(k);
@@ -66,15 +65,9 @@ fn reservoir_sample(
         i += 1;
     }
 
-    // Print sampled rows
+    // Write sampled rows
     for record in reservoir {
-        println!(
-            "{}",
-            record
-                .iter()
-                .collect::<Vec<_>>()
-                .join(&delimiter.to_string())
-        );
+        writer.write_record(&record.iter().collect::<Vec<_>>())?;
     }
 
     if i < k && i > 0 {

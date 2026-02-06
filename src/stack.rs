@@ -1,7 +1,7 @@
-use crate::utils::{detect_delimiter, input_reader};
+use crate::utils::{csv_writer, detect_delimiter, input_reader};
 use csv::ReaderBuilder;
 use std::error::Error;
-use std::io::{self, Write};
+use std::io;
 
 pub fn stack(file1_path: &str, file2_path: &str) -> Result<(), Box<dyn Error>> {
     // Read first file
@@ -55,36 +55,23 @@ pub fn stack(file1_path: &str, file2_path: &str) -> Result<(), Box<dyn Error>> {
         }
     }
 
-    // Use buffered output for performance
+    // Use CSV writer for proper quoting
     let stdout = io::stdout();
-    let mut writer = io::BufWriter::new(stdout.lock());
-    let delim_str = delimiter1.to_string();
+    let mut writer = csv_writer(stdout.lock(), delimiter1);
 
     // Print header once
-    writeln!(
-        writer,
-        "{}",
-        headers1.iter().collect::<Vec<_>>().join(&delim_str)
-    )?;
+    writer.write_record(&headers1.iter().collect::<Vec<_>>())?;
 
     // Print all records from first file
     for result in csv1.records() {
         let record = result?;
-        writeln!(
-            writer,
-            "{}",
-            record.iter().collect::<Vec<_>>().join(&delim_str)
-        )?;
+        writer.write_record(&record.iter().collect::<Vec<_>>())?;
     }
 
     // Print all records from second file
     for result in csv2.records() {
         let record = result?;
-        writeln!(
-            writer,
-            "{}",
-            record.iter().collect::<Vec<_>>().join(&delim_str)
-        )?;
+        writer.write_record(&record.iter().collect::<Vec<_>>())?;
     }
 
     writer.flush()?;

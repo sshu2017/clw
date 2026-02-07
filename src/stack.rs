@@ -60,18 +60,18 @@ pub fn stack(file1_path: &str, file2_path: &str) -> Result<(), Box<dyn Error>> {
     let mut writer = csv_writer(stdout.lock(), delimiter1);
 
     // Print header once
-    writer.write_record(&headers1.iter().collect::<Vec<_>>())?;
+    writer.write_record(headers1.iter().collect::<Vec<_>>())?;
 
     // Print all records from first file
     for result in csv1.records() {
         let record = result?;
-        writer.write_record(&record.iter().collect::<Vec<_>>())?;
+        writer.write_record(record.iter().collect::<Vec<_>>())?;
     }
 
     // Print all records from second file
     for result in csv2.records() {
         let record = result?;
-        writer.write_record(&record.iter().collect::<Vec<_>>())?;
+        writer.write_record(record.iter().collect::<Vec<_>>())?;
     }
 
     writer.flush()?;

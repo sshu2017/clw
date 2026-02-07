@@ -28,7 +28,7 @@ pub fn sample_rows(
 
     // Print headers if requested
     if include_header {
-        writer.write_record(&headers.iter().collect::<Vec<_>>())?;
+        writer.write_record(headers.iter().collect::<Vec<_>>())?;
     }
 
     // Use reservoir sampling with seeded RNG
@@ -67,7 +67,7 @@ fn reservoir_sample<W: io::Write>(
 
     // Write sampled rows
     for record in reservoir {
-        writer.write_record(&record.iter().collect::<Vec<_>>())?;
+        writer.write_record(record.iter().collect::<Vec<_>>())?;
     }
 
     if i < k && i > 0 {

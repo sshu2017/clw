@@ -95,7 +95,7 @@ pub fn select_cols(path: Option<&str>, columns: &str) -> Result<(), Box<dyn Erro
     let mut writer = csv_writer(stdout.lock(), delimiter);
 
     // Print selected headers
-    writer.write_record(&requested_cols)?;
+    writer.write_record(requested_cols)?;
 
     // Print selected columns for each row
     for result in csv.records() {
@@ -104,7 +104,7 @@ pub fn select_cols(path: Option<&str>, columns: &str) -> Result<(), Box<dyn Erro
             .iter()
             .map(|&idx| record.get(idx).unwrap_or(""))
             .collect();
-        writer.write_record(&selected_values)?;
+        writer.write_record(selected_values)?;
     }
 
     writer.flush()?;

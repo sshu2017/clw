@@ -41,7 +41,7 @@ pub fn paste(file1_path: &str, file2_path: &str) -> Result<(), Box<dyn Error>> {
 
     // Combine and write headers
     let combined_header: Vec<&str> = headers1.iter().chain(headers2.iter()).collect();
-    writer.write_record(&combined_header)?;
+    writer.write_record(combined_header)?;
 
     // Stream records from both files simultaneously
     let mut iter1 = csv1.records();
@@ -53,7 +53,7 @@ pub fn paste(file1_path: &str, file2_path: &str) -> Result<(), Box<dyn Error>> {
             (Some(Ok(record1)), Some(Ok(record2))) => {
                 // Combine and write row
                 let combined_row: Vec<&str> = record1.iter().chain(record2.iter()).collect();
-                writer.write_record(&combined_row)?;
+                writer.write_record(combined_row)?;
                 row_num += 1;
             }
             (None, None) => break, // Both files ended at same time - good!

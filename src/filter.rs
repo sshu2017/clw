@@ -40,7 +40,7 @@ pub fn filter_rows(
 
     // Print header if requested
     if include_header {
-        writer.write_record(&headers.iter().collect::<Vec<_>>())?;
+        writer.write_record(headers.iter().collect::<Vec<_>>())?;
     }
 
     // Filter and print matching rows
@@ -51,7 +51,7 @@ pub fn filter_rows(
         // Check if the value in the specified column matches any filter value
         if let Some(cell_value) = record.get(col_idx) {
             if filter_values.contains(cell_value) {
-                writer.write_record(&record.iter().collect::<Vec<_>>())?;
+                writer.write_record(record.iter().collect::<Vec<_>>())?;
                 match_count += 1;
             }
         }

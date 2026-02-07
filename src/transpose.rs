@@ -45,7 +45,7 @@ pub fn transpose(path: Option<&str>) -> Result<(), Box<dyn Error>> {
             })
             .collect();
 
-        writer.write_record(&transposed_row)?;
+        writer.write_record(transposed_row)?;
     }
 
     Ok(())

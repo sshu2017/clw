@@ -102,8 +102,10 @@ enum Commands {
 
         file: Option<String>,
     },
-    /// Stack two CSV files vertically (keeping one header)
-    Stack { file1: String, file2: String },
+    /// Stack CSV files vertically (keeping one header). Use '-' to read from stdin.
+    Stack {
+        files: Vec<String>,
+    },
     /// Paste two CSV files horizontally (side by side)
     Paste { file1: String, file2: String },
     /// Transpose rows and columns
@@ -144,7 +146,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             sort_index,
             file,
         } => freq(file.as_deref(), &column, plot, sort_index)?,
-        Commands::Stack { file1, file2 } => stack(&file1, &file2)?,
+        Commands::Stack { files } => stack(&files)?,
         Commands::Paste { file1, file2 } => paste(&file1, &file2)?,
         Commands::Transpose { file } => transpose(file.as_deref())?,
         Commands::Peek { number_rows, file } => peek(file.as_deref(), number_rows)?,

@@ -4,6 +4,206 @@ use std::io::Write;
 use tempfile::NamedTempFile;
 
 #[test]
+fn test_stack_three_files() {
+    let mut file1 = NamedTempFile::new().unwrap();
+    writeln!(file1, "name,age,city").unwrap();
+    writeln!(file1, "Alice,30,New York").unwrap();
+
+    let mut file2 = NamedTempFile::new().unwrap();
+    writeln!(file2, "name,age,city").unwrap();
+    writeln!(file2, "Bob,25,Los Angeles").unwrap();
+
+    let mut file3 = NamedTempFile::new().unwrap();
+    writeln!(file3, "name,age,city").unwrap();
+    writeln!(file3, "Charlie,35,Chicago").unwrap();
+
+    let mut cmd = cargo_bin_cmd!("clw");
+    cmd.arg("stack")
+        .arg(file1.path())
+        .arg(file2.path())
+        .arg(file3.path())
+        .assert()
+        .success();
+
+    let output = cmd.output().expect("Failed to execute command");
+    let stdout = String::from_utf8_lossy(&output.stdout);
+
+    // Header appears exactly once
+    let header_count = stdout
+        .lines()
+        .filter(|line| line.starts_with("name,age,city"))
+        .count();
+    assert_eq!(header_count, 1, "Should have exactly one header row");
+
+    // All data rows present
+    assert!(stdout.contains("Alice,30,New York"));
+    assert!(stdout.contains("Bob,25,Los Angeles"));
+    assert!(stdout.contains("Charlie,35,Chicago"));
+
+    // Total lines: 1 header + 3 data rows = 4
+    let line_count = stdout.lines().filter(|line| !line.is_empty()).count();
+    assert_eq!(line_count, 4, "Should have 4 total lines (1 header + 3 data)");
+}
+
+#[test]
+fn test_stack_stdin_first_position() {
+    let mut file1 = NamedTempFile::new().unwrap();
+    writeln!(file1, "name,age,city").unwrap();
+    writeln!(file1, "Bob,25,Los Angeles").unwrap();
+
+    let input = "name,age,city\nAlice,30,New York\n";
+
+    let mut cmd = cargo_bin_cmd!("clw");
+    cmd.arg("stack")
+        .arg("-")
+        .arg(file1.path())
+        .write_stdin(input)
+        .assert()
+        .success();
+
+    let output = cmd.output().expect("Failed to execute command");
+    let stdout = String::from_utf8_lossy(&output.stdout);
+
+    // Header appears exactly once
+    let header_count = stdout
+        .lines()
+        .filter(|line| line.starts_with("name,age,city"))
+        .count();
+    assert_eq!(header_count, 1, "Should have exactly one header row");
+
+    // Data from stdin should come first, then file data
+    let lines: Vec<&str> = stdout.lines().collect();
+    let alice_pos = lines.iter().position(|l| l.contains("Alice")).unwrap();
+    let bob_pos = lines.iter().position(|l| l.contains("Bob")).unwrap();
+    assert!(alice_pos < bob_pos, "Stdin data should come before file data");
+}
+
+#[test]
+fn test_stack_stdin_second_position() {
+    let mut file1 = NamedTempFile::new().unwrap();
+    writeln!(file1, "name,age,city").unwrap();
+    writeln!(file1, "Bob,25,Los Angeles").unwrap();
+
+    let input = "name,age,city\nAlice,30,New York\n";
+
+    let mut cmd = cargo_bin_cmd!("clw");
+    cmd.arg("stack")
+        .arg(file1.path())
+        .arg("-")
+        .write_stdin(input)
+        .assert()
+        .success();
+
+    let output = cmd.output().expect("Failed to execute command");
+    let stdout = String::from_utf8_lossy(&output.stdout);
+
+    // Header appears exactly once
+    let header_count = stdout
+        .lines()
+        .filter(|line| line.starts_with("name,age,city"))
+        .count();
+    assert_eq!(header_count, 1, "Should have exactly one header row");
+
+    // File data should come first, then stdin data
+    let lines: Vec<&str> = stdout.lines().collect();
+    let bob_pos = lines.iter().position(|l| l.contains("Bob")).unwrap();
+    let alice_pos = lines.iter().position(|l| l.contains("Alice")).unwrap();
+    assert!(bob_pos < alice_pos, "File data should come before stdin data");
+}
+
+#[test]
+fn test_stack_stdin_pipe_delimited() {
+    let mut file1 = NamedTempFile::new().unwrap();
+    writeln!(file1, "id|product|price").unwrap();
+    writeln!(file1, "2|Gadget|19.99").unwrap();
+
+    let input = "id|product|price\n1|Widget|9.99\n";
+
+    let mut cmd = cargo_bin_cmd!("clw");
+    cmd.arg("stack")
+        .arg("-")
+        .arg(file1.path())
+        .write_stdin(input)
+        .assert()
+        .success();
+
+    let output = cmd.output().expect("Failed to execute command");
+    let stdout = String::from_utf8_lossy(&output.stdout);
+
+    assert!(stdout.contains("1|Widget|9.99"), "Should contain stdin data");
+    assert!(
+    stdout.contains("2|Gadget|19.99"),
+    "Should contain file data"
+    );
+
+    // Header appears once
+    let header_count = stdout
+        .lines()
+        .filter(|line| line.starts_with("id|product|price"))
+        .count();
+    assert_eq!(header_count, 1, "Should have exactly one header row");
+}
+
+#[test]
+fn test_stack_two_stdin_markers_fails() {
+    let input = "name,age\nAlice,30\n";
+
+    let mut cmd = cargo_bin_cmd!("clw");
+    cmd.arg("stack")
+        .arg("-")
+        .arg("-")
+        .write_stdin(input)
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains(
+            "Cannot use '-' for more than one input",
+        ));
+}
+
+#[test]
+fn test_stack_three_files_with_stdin() {
+    let mut file1 = NamedTempFile::new().unwrap();
+    writeln!(file1, "name,age").unwrap();
+    writeln!(file1, "Bob,25").unwrap();
+
+    let mut file2 = NamedTempFile::new().unwrap();
+    writeln!(file2, "name,age").unwrap();
+    writeln!(file2, "Charlie,35").unwrap();
+
+    let input = "name,age\nAlice,30\n";
+
+    let mut cmd = cargo_bin_cmd!("clw");
+    cmd.arg("stack")
+        .arg("-")
+        .arg(file1.path())
+        .arg(file2.path())
+        .write_stdin(input)
+        .assert()
+        .success();
+
+    let output = cmd.output().expect("Failed to execute command");
+    let stdout = String::from_utf8_lossy(&output.stdout);
+
+    let header_count = stdout
+        .lines()
+        .filter(|line| line.starts_with("name,age"))
+        .count();
+    assert_eq!(header_count, 1, "Should have exactly one header row");
+
+    let lines: Vec<&str> = stdout.lines().collect();
+    let alice_pos = lines.iter().position(|l| l.contains("Alice")).unwrap();
+    let bob_pos = lines.iter().position(|l| l.contains("Bob")).unwrap();
+    let charlie_pos = lines.iter().position(|l| l.contains("Charlie")).unwrap();
+
+    assert!(alice_pos < bob_pos, "Stdin should come first");
+    assert!(bob_pos < charlie_pos, "file1 should come before file2");
+
+    // Total: 1 header + 3 data rows = 4
+    let line_count = stdout.lines().filter(|line| !line.is_empty()).count();
+    assert_eq!(line_count, 4);
+}
+
+#[test]
 fn test_stack_basic_comma_delimited() {
     // Create two temporary CSV files with matching headers
     let mut file1 = NamedTempFile::new().unwrap();
@@ -414,4 +614,71 @@ fn test_stack_header_only_file() {
     // Should have exactly 2 lines (header + 1 data row)
     let line_count = stdout.lines().filter(|line| !line.is_empty()).count();
     assert_eq!(line_count, 2, "Should have 2 total lines");
+}
+
+#[test]
+fn test_stack_mismatch_no_partial_output() {
+    // Three files where the third has mismatched headers.
+    // No data from matching files should appear on stdout before the error.
+    let mut file1 = NamedTempFile::new().unwrap();
+    writeln!(file1, "name,age").unwrap();
+    writeln!(file1, "Alice,30").unwrap();
+    writeln!(file1, "Bob,25").unwrap();
+
+    let mut file2 = NamedTempFile::new().unwrap();
+    writeln!(file2, "name,age").unwrap();
+    writeln!(file2, "Charlie,35").unwrap();
+
+    let mut file3 = NamedTempFile::new().unwrap();
+    writeln!(file3, "fullname,age").unwrap();
+    writeln!(file3, "Dave,40").unwrap();
+
+    let mut cmd = cargo_bin_cmd!("clw");
+    let output = cmd
+        .arg("stack")
+        .arg(file1.path())
+        .arg(file2.path())
+        .arg(file3.path())
+        .output()
+        .expect("Failed to execute command");
+
+    assert!(!output.status.success(), "Command should fail");
+    assert!(
+        String::from_utf8_lossy(&output.stderr).contains("Headers don't match at position"),
+        "Should report header mismatch"
+    );
+    assert!(
+        output.stdout.is_empty(),
+        "No partial output should appear on stdout before the error"
+    );
+}
+
+#[test]
+fn test_stack_mismatch_no_partial_output_with_stdin() {
+    // Two files via stdin '-' followed by a disk file with mismatched headers.
+    // Stdin data must not appear on stdout before the error.
+    let input = "name,age\nAlice,30\nBob,25\n";
+
+    let mut file2 = NamedTempFile::new().unwrap();
+    writeln!(file2, "fullname,age").unwrap();
+    writeln!(file2, "Charlie,35").unwrap();
+
+    let mut cmd = cargo_bin_cmd!("clw");
+    let output = cmd
+        .arg("stack")
+        .arg("-")
+        .arg(file2.path())
+        .write_stdin(input)
+        .output()
+        .expect("Failed to execute command");
+
+    assert!(!output.status.success(), "Command should fail");
+    assert!(
+        String::from_utf8_lossy(&output.stderr).contains("Headers don't match at position"),
+        "Should report header mismatch"
+    );
+    assert!(
+        output.stdout.is_empty(),
+        "No partial output should appear on stdout before the error"
+    );
 }

@@ -27,6 +27,9 @@ pub fn stack(files: &[String]) -> Result<(), Box<dyn Error>> {
         writer.write_record(headers.iter().collect::<Vec<_>>())?;
         for result in csv.records() {
             let record = result?;
+            if record == headers {
+                continue;
+            }
             writer.write_record(record.iter().collect::<Vec<_>>())?;
         }
         writer.flush()?;

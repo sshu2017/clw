@@ -145,6 +145,45 @@ fn test_stack_stdin_pipe_delimited() {
 }
 
 #[test]
+fn test_stack_pure_stdin_concatenated_files() {
+    // Pure stdin mode (no file args at all) with multiple concatenated CSV files.
+    // Duplicate header rows from files 2+ must be filtered out.
+    let data = "name,age\nAlice,30\nBob,25\n";
+
+    // Simulate `cat a.csv b.csv c.csv | clw stack`
+    let input = format!("{data}{data}{data}");
+
+    let mut cmd = cargo_bin_cmd!("clw");
+    cmd.arg("stack").write_stdin(input).assert().success();
+
+    let output = cmd.output().expect("Failed to execute command");
+    let stdout = String::from_utf8_lossy(&output.stdout);
+
+    // Header appears exactly once
+    let header_count = stdout
+        .lines()
+        .filter(|line| line.starts_with("name,age"))
+        .count();
+    assert_eq!(header_count, 1, "Should have exactly one header row");
+
+    // Data rows from all three copies present
+    assert_eq!(
+        stdout.lines().filter(|l| l.contains("Alice,30")).count(),
+        3,
+        "Should have Alice data from all 3 copies"
+    );
+    assert_eq!(
+        stdout.lines().filter(|l| l.contains("Bob,25")).count(),
+        3,
+        "Should have Bob data from all 3 copies"
+    );
+
+    // Total lines: 1 header + 6 data rows = 7
+    let line_count = stdout.lines().filter(|line| !line.is_empty()).count();
+    assert_eq!(line_count, 7, "Should have 7 total lines (1 header + 6 data)");
+}
+
+#[test]
 fn test_stack_two_stdin_markers_fails() {
     let input = "name,age\nAlice,30\n";
 
